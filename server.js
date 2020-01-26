@@ -9,11 +9,11 @@ app.use(morgan('tiny'));
 app.use('/static',express.static(__dirname + '/public'));
 app.use(bp.json());
 
-app.get('/', (req, res)=>{
+app.get('/:table_name', (req, res)=>{
 
 });
 
-app.post('/', (req, res)=>{
+app.post('/:table_name', (req, res)=>{
 
 });
 
