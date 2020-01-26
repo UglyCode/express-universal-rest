@@ -3,8 +3,6 @@ const bp = require('body-parser');
 const cors = require('cors');
 const morgan = require('morgan');
 
-const DATABASE_LINK = process.env.DATABASE_URL || 'localhost:5432';
-
 const app = express();
 app.use(cors());
 app.use(morgan('tiny'));
