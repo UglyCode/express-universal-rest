@@ -13,9 +13,7 @@ app.use(bp.json());
 
 app.get('/:table_name', (req, res) => pgHandlers.handleTableGet(req, res));
 
-app.post('/:table_name', (req, res)=>{
-
-});
+app.post('/:table_name', (req, res) => pgHandlers.handleTablePost(req, res));
 
 const PORT = process.env.PORT || 3001;
 

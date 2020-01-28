@@ -5,8 +5,7 @@ const DATABASE_LINK = process.env.DATABASE_URL ||
 const client = new Client({
     connectionString: DATABASE_LINK,
 });
-client.connect()
-    .catch(e => handleLocalError(e));
+client.connect().catch(e => handleLocalError(e));
 
 const handleTableGet = (req,res) => {
     if (!req.params.table_name){
@@ -31,7 +30,7 @@ const handleTablePost = (req, res) => {
     client.query(
         `INSERT INTO public.${table} (${Object.keys(payload[0]).join(',')})
         VALUES ${payload.reduce((accum, elem, i, arr) => {
-        accum += `(${Object.values(elem).join(',')})` + (arr.length-1 === i) ? ' ':', ';
+        accum += `(${createValuesInsertString(Object.values(elem))})` + (arr.length-1 === i) ? ' ':', ';
         return accum;
         }, '')};`
     )
@@ -40,6 +39,36 @@ const handleTablePost = (req, res) => {
 
 };
 
+const createValuesInsertString = (arr) => {
+    return arr.reduce((accum, elem, i, arr) => {
+
+        let result;
+        //special values
+        switch (elem) {
+            case 'now()': result = elem;
+        }
+
+        //usual values
+        if (!result) {
+            switch (typeof elem) {
+                case "string":
+                    result = `'${elem}'`;
+                    break;
+                case "number":
+                    result = `${elem}`;
+                    break;
+                case "boolean":
+                    result = `${elem.toString()}`;
+                    break;
+                default:
+                    result = '';
+            }
+        }
+
+        return result + (arr.length - 1 === i) ? '' : ',';
+
+    },'');
+};
 
 const sendQueryResult = (queryResult, res) => {
 
