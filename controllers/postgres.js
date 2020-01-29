@@ -30,7 +30,7 @@ const handleTablePost = (req, res) => {
     client.query(
         `INSERT INTO public.${table} (${Object.keys(payload[0]).join(',')})
         VALUES ${payload.reduce((accum, elem, i, arr) => {
-        accum += `(${createValuesInsertString(Object.values(elem))})` + (arr.length-1 === i) ? ' ':', ';
+        accum += `(${createValuesInsertString(Object.values(elem))})` + ((arr.length-1 === i) ? ' ':', ');
         return accum;
         }, '')};`
     )
@@ -40,7 +40,7 @@ const handleTablePost = (req, res) => {
 };
 
 const createValuesInsertString = (arr) => {
-    return arr.reduce((accum, elem, i, arr) => {
+   const valuesString = arr.reduce((accum, elem, i, arr) => {
 
         let result;
         //special values
@@ -65,9 +65,12 @@ const createValuesInsertString = (arr) => {
             }
         }
 
-        return result + (arr.length - 1 === i) ? '' : ',';
+        accum += result + ((arr.length - 1 === i) ? '' : ',');
+        return accum;
 
     },'');
+
+   return valuesString;
 };
 
 const sendQueryResult = (queryResult, res) => {
@@ -78,7 +81,7 @@ const sendQueryResult = (queryResult, res) => {
         res.status(500);
         resBody = 'Invalid query result';
     } else if (resBody.length === 0){
-        resBody = 'Table is empty';
+        resBody = 'Query result is empty';
     }
 
     res.json(resBody);
